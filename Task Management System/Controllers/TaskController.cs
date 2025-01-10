@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace MyTask_Management_System.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
 
@@ -46,7 +47,6 @@ namespace MyTask_Management_System.Controllers
         }
 
         // POST: api/Task
-        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateTask([FromBody] TaskModel task)
         {

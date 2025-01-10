@@ -5,10 +5,10 @@ using Microsoft.IdentityModel.Tokens;
 using MyTask_Management_System.Data;
 using System.Text;
 using System;
-using MyTask_Management_System.Data.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Win32;
 using System.Security.Principal;
+using MyTask_Management_System.Data.services;
 
 namespace MyTask_Management_System.Extensions
 {
@@ -22,10 +22,8 @@ namespace MyTask_Management_System.Extensions
             services.AddDbContext<ApplicationDBContext>(
                  op => op.UseSqlServer(connection));
 
-            // Register Identity services
-    services.AddIdentity<AppUser, IdentityRole>()
-            .AddEntityFrameworkStores<ApplicationDBContext>()
-            .AddDefaultTokenProviders();
+            //APPLY CQRS
+            services.AddCors();
 
 
             // add services

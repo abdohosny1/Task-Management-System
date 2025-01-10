@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MyTask_Management_System.Core.Helper;
 using MyTask_Management_System.Dto;
 
 namespace MyTask_Management_System.Controllers
@@ -10,17 +11,17 @@ namespace MyTask_Management_System.Controllers
     public class AcountController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;
         private readonly ITokenService _tokenService;
 
+
         public AcountController(
-       UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
+       UserManager<AppUser> userManager,
        ITokenService tokenService)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
             _tokenService = tokenService;
         }
+
 
         [HttpPost("Login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
@@ -29,16 +30,16 @@ namespace MyTask_Management_System.Controllers
 
             if (user == null) return Unauthorized();
 
-            var result = await _signInManager.
-                CheckPasswordSignInAsync(user, loginDto.Password, false);
+            var result = await _userManager.
+                CheckPasswordAsync(user, loginDto.Password);
 
-            if (!result.Succeeded) return Unauthorized();
+            if (!result) return Unauthorized("Invalid Password");
 
             return new UserDto
             {
                 Email = user.Email,
-                DisplayName = user.DisplayName,
-                Token = _tokenService.CreateToken(user),
+                Name = user.Name,
+                Token =await _tokenService.CreateToken(user),
             };
         }
         [HttpGet("Emailexists")]
@@ -58,7 +59,7 @@ namespace MyTask_Management_System.Controllers
             }
             var user = new AppUser
             {
-                DisplayName = registerDto.DisplyName,
+                Name = registerDto.Name,
                 Email = registerDto.Email,
                 UserName = registerDto.Email,
             };
@@ -67,10 +68,15 @@ namespace MyTask_Management_System.Controllers
 
             if (!result.Succeeded) return BadRequest();
 
+          //  var rolesResult = await _userManager.AddToRoleAsync(user, ConstRole.MRMBER);
+
+            //if (!rolesResult.Succeeded) return BadRequest(rolesResult.Errors);
+
+
             return new UserDto
             {
-                DisplayName = user.DisplayName,
-                Token = _tokenService.CreateToken(user),
+                Name = user.Name,
+                Token =await _tokenService.CreateToken(user),
                 Email = user.Email
             };
 

@@ -4,7 +4,9 @@ namespace MyTask_Management_System.Core.Repository
 {
     public interface ITokenService 
     {
-        string CreateToken(AppUser user);
+      //  string CreateToken(AppUser user);
+        Task<string> CreateToken(AppUser user);
+
 
     }
 }

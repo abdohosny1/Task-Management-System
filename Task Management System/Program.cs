@@ -1,32 +1,23 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using MyTask_Management_System.Core.Helper;
 using MyTask_Management_System.Extensions;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-string text = "";
-
-// Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddServices(builder);
-builder.Services.AddIdentityService(builder.Configuration);
-//builder.Services.AddSwaggerDocumantion();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.Configure<Token>(builder.Configuration.GetSection("Token"));
+builder.Services.AddServices(builder);
+builder.Services.AddIdentityServicesExtensions(builder.Configuration);
 
-//add cors
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(text,
-    builder =>
-    {
-        builder.AllowAnyOrigin();
-        builder.AllowAnyMethod();
-        builder.AllowAnyHeader();
-    });
-});
+
+
+builder.Logging.AddConsole();
+
 
 
 var app = builder.Build();
@@ -36,16 +27,22 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
+
 }
 
+var allowedOrigins = builder.Configuration["CorsSettings:AllowedOrigins"];
 
+// Add CORS policy
+app.UseCors(builder => builder.AllowAnyHeader()
+                              .AllowAnyMethod()
+                              .AllowCredentials()
+                              .WithOrigins(allowedOrigins.Split(',')));
 
-app.UseHttpsRedirection();
-app.UseCors(text);
-
+app.UseDefaultFiles();
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.MapControllers();
 

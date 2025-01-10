@@ -1,6 +1,6 @@
 @MyTask_Management_System_HostAddress = http://localhost:5267
 
-GET {{MyTask_Management_System_HostAddress}}/employees/
+GET {{MyTask_Management_System_HostAddress}}/Task/
 Accept: application/json
 
 ###

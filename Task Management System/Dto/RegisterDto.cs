@@ -13,7 +13,7 @@ namespace MyTask_Management_System.Dto
         public string Password { get; set; }
         // [Required]
 
-        public string DisplyName { get; set; }
+        public string Name { get; set; }
 
     }
 }
